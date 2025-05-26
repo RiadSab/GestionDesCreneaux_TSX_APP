@@ -1,0 +1,319 @@
+.my-bookings-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.my-bookings-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  color: #1e3a8a;
+  position: relative;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid #3b82f6;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.bookings-controls {
+  display: flex;
+  align-items: flex-end; /* Align items to the bottom for consistent baseline */
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1.5rem; /* Increased gap between elements */
+}
+
+/* Fix search bar to match design exactly */
+.search-bar {
+  flex: 0 1 400px;
+  max-width: 60%;
+  display: flex;
+  align-items: stretch; /* Make elements stretch to same height */
+  gap: 0.25rem; /* Add a small gap between input and button */
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem; /* Restore full rounded corners */
+  font-size: 0.875rem; /* Consistent font size */
+  height: 100%; /* Ensure consistent height with parent's align-items: stretch */
+  box-sizing: border-box; /* Include padding and border in height calculation */
+}
+
+/* Style the search button to attach directly to input */
+.search-button {
+  padding: 0.75rem 1.25rem;
+  background-color: #3b82f6;
+  color: white;
+  border: 1px solid transparent; /* Add transparent border to match input's border width */
+  border-radius: 0.375rem; /* Restore full rounded corners */
+  font-size: 0.875rem; /* Consistent font size */
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  height: 100%; /* Ensure consistent height with parent's align-items: stretch */
+  box-sizing: border-box; /* Include padding and border in height calculation */
+  display: inline-flex; /* Helps with internal vertical alignment of text */
+  align-items: center; /* Vertically center text within the button */
+  justify-content: center;
+}
+
+.search-button:hover {
+  background-color: #2563eb;
+}
+
+.search-button:active {
+  background-color: #1d4ed8;
+}
+
+.filter-options {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: nowrap; /* Prevent wrapping */
+  flex: 0 0 auto; /* Don't allow filters to shrink */
+  white-space: nowrap; /* Keep text on one line */
+}
+
+.filter-group {
+  /* display: flex; align-items: center; gap: 0.5rem; */ /* Remove old flex styles */
+}
+
+.filter-group label {
+  display: block; /* Make label take its own line */
+  margin-bottom: 0.25rem; /* Space between label and select */
+  font-weight: 500;
+  color: #4b5563;
+  font-size: 0.875rem; /* Consistent font size */
+}
+
+.filter-group select {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem; /* Consistent font size */
+  background-color: white;
+  min-width: 100px; /* Adjust as needed, e.g., to fit "Cancelled" */
+  box-sizing: border-box; /* Include padding and border in height calculation */
+  /* Explicitly set height to match search input/button.
+     Input height: (0.75rem padding * 2) + (approx 1.2 * 0.875rem line-height) + (1px border * 2)
+     Assuming 1rem = 16px: (12px * 2) + (1.2 * 14px) + 2px = 24px + 16.8px + 2px = 42.8px.
+     Let's use 2.625rem (42px) or adjust slightly for visual perfection.
+  */
+  height: 2.625rem; /* Approx 42px. Adjust if it's slightly off. */
+}
+
+.no-bookings {
+  padding: 3rem;
+  text-align: center;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  color: #6b7280;
+}
+
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.booking-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.booking-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.booking-card.cancelled {
+  background-color: #f9fafb;
+  border-left: 4px solid #ef4444;
+}
+
+.booking-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+}
+
+.booking-basic-info {
+  flex: 1;
+}
+
+.booking-basic-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  color: #111827;
+}
+
+.booking-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.booking-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-badge.confirmed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.cancelled {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.expand-icon {
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+.booking-details {
+  padding: 0 1.5rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 0.5rem;
+}
+
+.booking-description {
+  margin-bottom: 1.5rem;
+}
+
+.booking-description h4 {
+  margin: 1rem 0 0.5rem;
+  color: #4b5563;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.booking-description p {
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.booking-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  gap: 0.75rem;
+}
+
+.cancel-button {
+  padding: 0.5rem 1rem;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancel-button:hover {
+  background-color: #fecaca;
+}
+
+.cancel-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.resend-button {
+  padding: 0.5rem 1rem;
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.resend-button:hover {
+  background-color: #bae6fd;
+}
+
+@media (max-width: 768px) {
+  .my-bookings-container {
+    padding: 1rem;
+  }
+
+  .bookings-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-bar {
+    max-width: 100%; /* Full width on mobile */
+    margin-bottom: 1rem;
+  }
+
+  .filter-options {
+    justify-content: flex-start;
+  }
+
+  .booking-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .booking-status-indicator {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+
+  .booking-meta {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}

@@ -1,0 +1,345 @@
+.settings-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.settings-header {
+  margin-bottom: 2rem;
+}
+
+.settings-header h1 {
+  margin: 0;
+  color: #1e3a8a;
+  font-size: 1.8rem;
+}
+
+.settings-content {
+  display: flex;
+  gap: 2rem;
+}
+
+.settings-sidebar {
+  flex: 0 0 200px;
+}
+
+.settings-nav {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.nav-item {
+  display: block;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  text-align: left;
+  border: none;
+  background-color: transparent;
+  font-size: 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #e5e7eb;
+  transition: all 0.2s;
+}
+
+.nav-item:last-child {
+  border-bottom: none;
+}
+
+.nav-item:hover {
+  background-color: #f9fafb;
+}
+
+.nav-item.active {
+  background-color: #eff6ff;
+  color: #2563eb;
+  font-weight: 500;
+  border-left: 3px solid #2563eb;
+}
+
+.settings-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-section {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.settings-section h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 1.25rem;
+  color: #1f2937;
+}
+
+.settings-section h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #1f2937;
+}
+
+.account-info {
+  margin-bottom: 1rem;
+}
+
+.info-item {
+  display: flex;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.info-label {
+  width: 150px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.info-value {
+  color: #111827;
+}
+
+.password-section {
+  background-color: #f9fafb;
+  border-radius: 0.375rem;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.password-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.error-message {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.change-password-button,
+.save-settings-button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.change-password-button:hover,
+.save-settings-button:hover {
+  background-color: #2563eb;
+}
+
+.change-password-button:disabled,
+.save-settings-button:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+.settings-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.settings-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 0.375rem;
+}
+
+.option-text p {
+  margin: 0.25rem 0 0 0;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e5e7eb;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: '';
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: #3b82f6;
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+.theme-select {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  min-width: 150px;
+}
+
+.save-settings-button {
+  align-self: flex-end;
+  margin-top: 1rem;
+}
+
+.account-form {
+  margin-bottom: 2rem;
+  background-color: #f9fafb;
+  border-radius: 0.375rem;
+  padding: 1.5rem;
+}
+
+/* Remove underline from headings */
+.settings-container h1,
+.settings-header h1,
+.settings-page-container h1,
+.settings-content h2 {
+  text-decoration: none !important;
+  position: relative; /* Reset positioning context */
+}
+
+/* Override any ::after pseudo-element that might be creating an underline */
+.settings-container h1::after,
+.settings-header h1::after,
+.settings-page-container h1::after,
+.settings-content h2::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Target any span within the headings */
+.settings-container h1 span,
+.settings-header h1 span,
+.settings-page-container h1 span,
+.settings-content h2 span {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+/* Remove any ::after on spans within headings */
+.settings-container h1 span::after,
+.settings-header h1 span::after,
+.settings-page-container h1 span::after,
+.settings-content h2 span::after {
+  display: none !important;
+  content: none !important;
+}
+
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 1rem;
+  }
+
+  .settings-content {
+    flex-direction: column;
+  }
+
+  .settings-sidebar {
+    flex: 0 0 auto;
+    margin-bottom: 1.5rem;
+  }
+
+  .settings-nav {
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .nav-item {
+    border-bottom: none;
+    white-space: nowrap;
+    padding: 0.75rem 1rem;
+    flex: 1 0 auto;
+  }
+
+  .nav-item.active {
+    border-left: none;
+    border-bottom: 3px solid #2563eb;
+  }
+
+  .settings-option {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .option-text {
+    margin-bottom: 1rem;
+  }
+
+  .toggle-switch {
+    align-self: flex-end;
+  }
+}
