@@ -4,7 +4,6 @@ import { useLanguage } from '../contexts/LanguageContext';
 const TranslationTester: React.FC = () => {
   const { t, language, setLanguage, isTranslationsLoaded } = useLanguage();
 
-  // Define some keys to test
   const testKeys = [
     'app.title',
     'nav.dashboard',

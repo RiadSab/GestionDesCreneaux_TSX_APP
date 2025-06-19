@@ -11,7 +11,6 @@ export interface User {
 export interface Room {
   id: number;
   name: string;
-  // Add other necessary properties based on your application needs
 }
 
 export interface TimeSlot {
@@ -42,7 +41,6 @@ export interface Booking {
   };
 }
 
-// Settings related interfaces
 export interface UserSettings {
   account: {
     name: string;
@@ -54,7 +52,6 @@ export interface UserSettings {
   };
 }
 
-// Component props interfaces
 export interface LoginCredentials {
   username: string;
   password: string;
@@ -103,7 +100,6 @@ export interface NavbarProps {
   onLogout: () => void;
 }
 
-// Types pour la récupération des salles
 export interface RoomDTO {
   id: number;
   roomLetter: string;
@@ -115,16 +111,14 @@ export interface GetAllRoomsResponse {
   message?: string;
 }
 
-// Types pour la réservation de créneaux
 export interface ReservationRequestData {
-  startTime: string; // Sera un Timestamp, formaté en string ISO 8601 par exemple
+  startTime: string;
   roomId: number;
   userId: number;
 }
 
 export interface ReserveSlotsResponse {
   message: string;
-  // Potentiellement d'autres champs si le backend renvoie plus d'infos sur la réservation créée
 }
 
 export interface LoginResponse {
@@ -155,8 +149,8 @@ export interface ReservationId {
 
 export interface UserBookingSlot {
   id: number;
-  startTime: string; // ISO date string
-  endTime: string; // ISO date string
+  startTime: string;
+  endTime: string;
   duration: number;
   reserved: boolean;
   room: RoomInfoForBooking;

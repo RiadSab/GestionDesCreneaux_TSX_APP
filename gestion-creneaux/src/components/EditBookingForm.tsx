@@ -28,7 +28,6 @@ const EditBookingForm: React.FC<EditBookingFormProps> = ({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Load booking data on component mount
   useEffect(() => {
     const loadBookingData = async () => {
       setIsLoading(true);
@@ -36,7 +35,6 @@ const EditBookingForm: React.FC<EditBookingFormProps> = ({
       try {
         console.log('Loading booking data for ID:', bookingId);
 
-        // Get the booking data from localStorage
         const storedBookingData = localStorage.getItem('editingBooking');
         console.log('Stored booking data:', storedBookingData);
 
@@ -45,7 +43,6 @@ const EditBookingForm: React.FC<EditBookingFormProps> = ({
             const parsedBooking = JSON.parse(storedBookingData) as Booking;
             console.log('Parsed booking:', parsedBooking);
 
-            // Verify that the parsed booking ID matches the URL parameter
             if (parsedBooking.id.toString() !== bookingId) {
               console.error(
                 'Booking ID mismatch:',
@@ -56,10 +53,8 @@ const EditBookingForm: React.FC<EditBookingFormProps> = ({
               throw new Error('Wrong booking loaded');
             }
 
-            // Set the booking data
             setBooking(parsedBooking);
 
-            // Set the form data with the actual booking values
             setFormData({
               title: parsedBooking.title || '',
               description: parsedBooking.description || '',
@@ -73,7 +68,6 @@ const EditBookingForm: React.FC<EditBookingFormProps> = ({
             setErrors({
               form: 'Error loading correct booking data. Please try again.',
             });
-            // Navigate back to bookings page after a delay
             setTimeout(() => navigate('/bookings'), 2000);
           }
         } else {
@@ -101,7 +95,6 @@ const EditBookingForm: React.FC<EditBookingFormProps> = ({
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Clear error for this field
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -142,9 +135,8 @@ const EditBookingForm: React.FC<EditBookingFormProps> = ({
     setIsLoading(true);
 
     try {
-      // Create updated booking object while preserving all original fields
       const updatedBooking: Booking = {
-        ...booking, // Keep all original fields
+        ...booking,
         title: formData.title,
         description: formData.description,
         date: formData.date,
@@ -154,16 +146,12 @@ const EditBookingForm: React.FC<EditBookingFormProps> = ({
 
       console.log('Submitting updated booking:', updatedBooking);
 
-      // Call the update function passed from parent
       onUpdateBooking(updatedBooking);
 
-      // Clear the stored booking after successful update
       localStorage.removeItem('editingBooking');
 
-      // Show success message
       alert(t('bookings.updateSuccess') || 'Booking updated successfully');
 
-      // Navigate back to bookings page
       navigate('/bookings');
     } catch (error) {
       console.error('Error updating booking:', error);

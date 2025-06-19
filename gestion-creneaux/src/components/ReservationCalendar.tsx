@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react'; // Ensure useMemo is imported
-import { getAllRooms, reserveSlots, cancelSlot } from '../services/apiService'; // Corrected path, added cancelSlot
-import { RoomDTO, ReservationRequestData, User, Booking } from '../types/types'; // Corrected path. Assuming Booking is used by EmailConfirmation
+import React, { useState, useEffect, useMemo } from 'react';
+import { getAllRooms, reserveSlots, cancelSlot } from '../services/apiService';
+import { RoomDTO, ReservationRequestData, User, Booking } from '../types/types';
 import { Value } from 'react-calendar/dist/cjs/shared/types';
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css'; // Import calendar CSS
-import { TIME_SLOTS } from '../utils/helpers'; // Corrected path
-import EmailConfirmation from './EmailConfirmation'; // Assuming EmailConfirmation is correctly imported
+import 'react-calendar/dist/Calendar.css';
+import { TIME_SLOTS } from '../utils/helpers';
+import EmailConfirmation from './EmailConfirmation';
 import { useAuth } from '../contexts/AuthContext';
 import '../styles/components/ReservationCalendar.css';
 
@@ -13,61 +13,46 @@ interface ReservationCalendarProps {
   onBookingComplete?: (response: any) => void;
 }
 
-// Define GetAllRoomsResponse if not already globally available or imported from types.ts
-// For clarity, if it's in types.ts as "export interface GetAllRoomsResponse { data?: RoomDTO[]; }"
-// then no need to redefine. Assuming it's handled by apiService return types.
-
 const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
   onBookingComplete,
 }) => {
-  // const { t } = useTranslation();
   const { user: currentUser } = useAuth();
 
   const [rooms, setRooms] = useState<RoomDTO[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
-  const [selectedRoomLetter, setSelectedRoomLetter] = useState<string | null>(null); // New state for room letter
-  const [selectedRoomNumber, setSelectedRoomNumber] = useState<string | null>(null); // New state for room number
+  const [selectedRoomLetter, setSelectedRoomLetter] = useState<string | null>(null);
+  const [selectedRoomNumber, setSelectedRoomNumber] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [currentStep, setCurrentStep] = useState(1);
-  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
   const [reservationResponse, setReservationResponse] = useState<any | null>(null);
-  const [isCancelling, setIsCancelling] = useState(false); // New state for cancellation loading
-  const [cancelError, setCancelError] = useState<string | null>(null); // New state for cancellation error
-
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
   useEffect(() => {
     const fetchRooms = async () => {
       setIsLoading(true);
-      setErrors((prev) => ({ ...prev, rooms: '' })); // Clear previous rooms error
+      setErrors((prev) => ({ ...prev, rooms: '' }));
       try {
-        const responseData = await getAllRooms(); // responseData is of type GetAllRoomsResponse
+        const responseData = await getAllRooms();
 
-        // Check if responseData itself and responseData.rooms are valid
         if (responseData && Array.isArray(responseData.rooms)) {
           setRooms(responseData.rooms);
-          // If responseData.rooms is empty, the UI can handle displaying that.
         } else {
-          // This handles cases where responseData is falsy, or responseData.rooms is not an array.
-          setRooms([]); // Default to empty array
-          // Construct a general error message
-          setErrors((prev) => ({ ...prev, rooms: 'Failed to load rooms.' + ' (unexpected data format)' }));
+          setRooms([]);
+          setErrors((prev) => ({ ...prev, rooms: 'Failed to load rooms. (unexpected data format)' }));
         }
       } catch (error) {
-        // Error is caught, and user sees a message via setErrors
         const errorMessage = (error instanceof Error ? error.message : String(error));
-        setErrors((prev) => ({ ...prev, rooms: 'Failed to load rooms.' + ` (${errorMessage})` }));
+        setErrors((prev) => ({ ...prev, rooms: 'Failed to load rooms. (' + errorMessage + ')' }));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchRooms();
-    // No cleanup function needed as `mounted` flag is removed.
-  }, []); // Keep 't' as it's used in setErrors for translations // Removed t
-
-  // Derived values for dropdowns
+  }, []);
   const uniqueRoomLetters = useMemo(() => {
     const letters = new Set(rooms.map(room => room.roomLetter));
     return Array.from(letters).sort();
@@ -77,20 +62,17 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
     if (!selectedRoomLetter) return [];
     const numbers = rooms
       .filter(room => room.roomLetter === selectedRoomLetter)
-      .map(room => room.roomNumber.toString()); // Ensure roomNumber is string for consistency
-    // Sort numerically if possible, otherwise as strings.
+      .map(room => room.roomNumber.toString());
     return Array.from(new Set(numbers)).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
   }, [rooms, selectedRoomLetter]);
-
-  // Effect to update selectedRoomId when letter and number are chosen
   useEffect(() => {
     if (selectedRoomLetter && selectedRoomNumber) {
       const room = rooms.find(
-        r => r.roomLetter === selectedRoomLetter && r.roomNumber.toString() === selectedRoomNumber // Ensure comparison is string to string if roomNumber is number
+        r => r.roomLetter === selectedRoomLetter && r.roomNumber.toString() === selectedRoomNumber
       );
       if (room) {
         setSelectedRoomId(room.id);
-        setErrors(prev => ({ ...prev, selectedRoomId: '' })); // Corrected: use empty string to clear error
+        setErrors(prev => ({ ...prev, selectedRoomId: '' }));
       } else {
         setSelectedRoomId(null); 
       }
@@ -98,15 +80,13 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
       setSelectedRoomId(null); 
     }
   }, [selectedRoomLetter, selectedRoomNumber, rooms]);
-  
-  const validateStep = (step: number): boolean => {
+    const validateStep = (step: number): boolean => {
     const newErrors: Record<string, string> = {};
     if (step === 1) {
       if (!selectedRoomId) {
         newErrors.selectedRoomId = 'Room selection is required';
       }
     } else if (step === 2) {
-      // Date validation (Calendar ensures a date is always selected, minDate handles past)
     } else if (step === 3) { 
       if (selectedTimeSlots.length === 0) {
         newErrors.selectedTimeSlots = 'Please select at least one time slot';
@@ -135,11 +115,10 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
     }
     if (newDate) {
       const today = new Date();
-      today.setHours(0,0,0,0);
-      if (newDate >= today) {
+      today.setHours(0,0,0,0);      if (newDate >= today) {
         setSelectedDate(newDate);
         setSelectedTimeSlots([]); 
-        setErrors(prev => ({...prev, selectedDate: ''})); // Clear previous date error
+        setErrors(prev => ({...prev, selectedDate: ''}));
       } else {
         setErrors(prev => ({...prev, selectedDate: "Cannot select a past date"}));
       }
@@ -153,18 +132,15 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
         : [...prev, timeSlot]
     );
   };
-
   const handleRoomLetterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const letter = event.target.value;
     setSelectedRoomLetter(letter || null);
-    setSelectedRoomNumber(null); // Reset room number when letter changes
-    // selectedRoomId will be reset by the useEffect above
+    setSelectedRoomNumber(null);
   };
 
   const handleRoomNumberChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const number = event.target.value;
     setSelectedRoomNumber(number || null);
-    // selectedRoomId will be updated by the useEffect above
   };
 
   const getRoomNameById = (roomId: number | null) => {
@@ -172,9 +148,6 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
     const room = rooms.find(r => r.id === roomId);
     return room ? `${room.roomLetter}${room.roomNumber}` : '';
   };
-
-  // Prepare a partial user object for EmailConfirmation, as full User type might not be available
-  // EmailConfirmation component might need to be adjusted to accept Partial<User>
   let partialUserForEmail: Partial<User> | null = null;
   if (currentUser && typeof currentUser.id === 'number' && currentUser.name && currentUser.email) {
     partialUserForEmail = {
@@ -196,10 +169,8 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
     if (!currentUserName || typeof currentUserId !== 'number' || !selectedRoomId || selectedTimeSlots.length === 0) {
       setErrors({ form: 'Missing required information. Ensure you are logged in and all selections are made.' });
       return;
-    }
-
-    setIsLoading(true);
-    setCancelError(null); // Clear any previous cancel errors
+    }    setIsLoading(true);
+    setCancelError(null);
 
     const reservationRequests: ReservationRequestData[] = selectedTimeSlots.map(slot => {
       const slotDate = new Date(selectedDate);
@@ -213,11 +184,10 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
     });
 
     try {
-      const response = await reserveSlots(reservationRequests, currentUserName);
-      setReservationResponse(response);
+      const response = await reserveSlots(reservationRequests, currentUserName);      setReservationResponse(response);
       setSelectedRoomId(null);
-      setSelectedRoomLetter(null); // Reset room letter
-      setSelectedRoomNumber(null); // Reset room number
+      setSelectedRoomLetter(null);
+      setSelectedRoomNumber(null);
       setSelectedTimeSlots([]);
       setCurrentStep(1);
       if (onBookingComplete) {
@@ -244,34 +214,27 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
   };
 
   const handleCancelBooking = async () => {
-    if (!reservationResponse?.createdReservations || reservationResponse.createdReservations.length === 0) {
-      // This case should ideally not happen if EmailConfirmation is shown only after successful reservation
-      alert('No reservation details found to cancel.');
+    if (!reservationResponse?.createdReservations || reservationResponse.createdReservations.length === 0) {      alert('No reservation details found to cancel.');
       setShowEmailConfirmation(false);
       return;
     }
 
     setIsCancelling(true);
-    setCancelError(null);
-
-    try {
-      // Assuming createdReservations is an array of objects with an 'id' property
+    setCancelError(null);    try {
       const createdReservations: { id: number }[] = reservationResponse.createdReservations;
       
       const cancellationPromises = createdReservations.map(reservation => 
         cancelSlot(reservation.id)
       );
-      
-      await Promise.all(cancellationPromises);
+        await Promise.all(cancellationPromises);
 
       alert('Reservation cancelled successfully.');
       setShowEmailConfirmation(false);
-      setReservationResponse(null); // Clear the stored reservation response
-      // Optionally, reset other states or trigger a data refresh if needed
+      setReservationResponse(null);
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || error.message || 'Failed to cancel reservation.';
       setCancelError(errorMessage);
-      alert('Failed to cancel reservation.' + `: ${errorMessage}`);
+      alert('Failed to cancel reservation: ' + errorMessage);
     } finally {
       setIsCancelling(false);
     }
@@ -316,10 +279,9 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
               {number}
             </option>
           ))}
-        </select>
-      </div>
+        </select>      </div>
       
-      {errors.selectedRoomId && ( // This error is set in validateStep if selectedRoomId is null
+      {errors.selectedRoomId && (
         <div className="error-message">{errors.selectedRoomId}</div>
       )}
       <div className="step-actions">
@@ -378,7 +340,7 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
       )}
       <form onSubmit={handleSubmit} className="booking-form-final-step">
         {errors.form && <div className="error-message">{errors.form}</div>}
-        {cancelError && <div className="error-message">{cancelError}</div>} {/* Display cancellation error */}
+        {cancelError && <div className="error-message">{cancelError}</div>}
         <div className="booking-summary">
             <h3>Reservation Summary</h3>
             <div className="summary-item">
@@ -416,23 +378,17 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
         {currentStep === 3 && renderTimeSelection()}
       </div>
 
-      {showEmailConfirmation && reservationResponse && partialUserForEmail && ( // selectedRoomId check removed as it's part of booking construction
-        <EmailConfirmation
-          booking={{
-            // This mock booking object needs to satisfy the Booking type as much as possible
-            // Fields like password, createdAt, updatedAt are problematic if strictly required by Booking type
-            // and not available from partialUserForEmail or reservationResponse.
-            // It's best if EmailConfirmation can handle a more flexible booking object or Partial<Booking>.
-            id: reservationResponse.createdReservations?.[0]?.id || Date.now(), // Main ID for display
-            userId: partialUserForEmail.id as number, // id is checked in partialUserForEmail
-            title: `Reservation for ${getRoomNameById(selectedRoomId || reservationResponse.createdReservations?.[0]?.roomId)}`, // Use selectedRoomId or from response
-            userName: partialUserForEmail.name as string, // name is checked
-            userEmail: partialUserForEmail.email as string, // email is checked
+      {showEmailConfirmation && reservationResponse && partialUserForEmail && (        <EmailConfirmation
+          booking={{            id: reservationResponse.createdReservations?.[0]?.id || Date.now(),
+            userId: partialUserForEmail.id as number,
+            title: `Reservation for ${getRoomNameById(selectedRoomId || reservationResponse.createdReservations?.[0]?.roomId)}`,
+            userName: partialUserForEmail.name as string,
+            userEmail: partialUserForEmail.email as string,
             date: selectedDate.toISOString().split('T')[0],
             startTime: selectedTimeSlots[0] || reservationResponse.createdReservations?.[0]?.startTime?.substring(11,16) || 'N/A',
-            endTime: '', // Example, adjust as needed
+            endTime: '',
             spaceName: getRoomNameById(selectedRoomId || reservationResponse.createdReservations?.[0]?.roomId) || '',
-            status: 'confirmed', // This status is pre-cancellation
+            status: 'confirmed',
             room: { 
               id: selectedRoomId || reservationResponse.createdReservations?.[0]?.roomId, 
               name: getRoomNameById(selectedRoomId || reservationResponse.createdReservations?.[0]?.roomId) || '' 
@@ -450,10 +406,8 @@ const ReservationCalendar: React.FC<ReservationCalendarProps> = ({
           user={partialUserForEmail as Partial<User>} 
           onClose={() => setShowEmailConfirmation(false)}
           onSend={handleSendEmail}
-          onCancel={handleCancelBooking} // Pass the cancel handler
+          onCancel={handleCancelBooking} 
           previewOnly={false}
-          // Pass isCancelling to disable buttons in EmailConfirmation if needed
-          // isProcessingCancellation={isCancelling} 
         />
       )}
     </div>

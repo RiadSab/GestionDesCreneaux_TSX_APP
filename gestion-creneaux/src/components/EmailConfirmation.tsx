@@ -22,7 +22,6 @@ const EmailConfirmation: React.FC<EmailConfirmationProps> = ({
 }) => {
   const { t, language } = useLanguage();
 
-  // Define fallback translations for critical elements
   const emailTranslations = {
     en: {
       bookingConfirmed: 'Booking Confirmed',
@@ -78,20 +77,16 @@ const EmailConfirmation: React.FC<EmailConfirmationProps> = ({
     },
   };
 
-  // Enhanced translation function with fallbacks
   const translate = (key: string): string => {
-    // Try the context translation first
     const contextTranslation = t(key);
 
-    // If we get back the key itself, translation failed
     if (contextTranslation === key) {
       const keyParts = key.split('.');
-      const category = keyParts[0]; // e.g., 'email', 'booking'
-      const term = keyParts[1]; // e.g., 'bookingConfirmed', 'hello'
+      const category = keyParts[0];
+      const term = keyParts[1];
 
       const lang = language as 'en' | 'fr';
 
-      // Try to get from our local fallback translations
       if (term && (category === 'email' || category === 'booking')) {
         return (
           emailTranslations[lang][term as keyof typeof emailTranslations.en] ||
@@ -99,7 +94,7 @@ const EmailConfirmation: React.FC<EmailConfirmationProps> = ({
         );
       }
 
-      return term || key; // Return the term part or the whole key as last resort
+      return term || key;
     }
 
     return contextTranslation;

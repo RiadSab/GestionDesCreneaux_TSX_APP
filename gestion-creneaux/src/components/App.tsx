@@ -23,16 +23,13 @@ import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import LoadingSpinner from './LoadingSpinner';
 import ReservePage from './ReservePage';
 
-// Create a wrapper component to handle transitions
 const PageTransitionWrapper = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const [isPageLoading, setIsPageLoading] = useState(true);
 
   useEffect(() => {
-    // Set loading state when location changes
     setIsPageLoading(true);
 
-    // Small delay to ensure component has time to prepare
     const timer = setTimeout(() => {
       setIsPageLoading(false);
     }, 300);
@@ -47,26 +44,20 @@ const PageTransitionWrapper = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// InnerApp component to use AuthContext
 const InnerApp = () => {
   const { user, isAuthenticated, isLoading, logout, updateUser } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
 
   const handleModifyBooking = (modifiedBooking: Booking) => {
-    console.log('Modifying booking:', modifiedBooking);
-
-    setBookings((prevBookings) => {
-      // Check if the booking exists
+    console.log('Modifying booking:', modifiedBooking);    setBookings((prevBookings) => {
       const exists = prevBookings.some((b) => b.id === modifiedBooking.id);
 
       let updatedBookings;
       if (exists) {
-        // Update existing booking
         updatedBookings = prevBookings.map((booking) =>
           booking.id === modifiedBooking.id ? modifiedBooking : booking,
         );
       } else {
-        // Add as a new booking
         updatedBookings = [...prevBookings, modifiedBooking];
       }
 
@@ -74,8 +65,6 @@ const InnerApp = () => {
       return updatedBookings;
     });
   };
-
-  // Function to handle page transitions
   const handlePageTransition = (
     Component: React.ComponentType<any>,
     props: any,
@@ -86,9 +75,8 @@ const InnerApp = () => {
       </PageTransitionWrapper>
     );
   };
-
   if (isLoading) {
-    return <LoadingSpinner />; // Show loading spinner while auth state is loading
+    return <LoadingSpinner />;
   }
 
   return (
@@ -103,11 +91,7 @@ const InnerApp = () => {
               element={
                 isAuthenticated ? (
                   <Navigate to="/dashboard" replace />
-                ) : (
-                  // Pass login from AuthContext if LoginPage needs it directly,
-                  // otherwise LoginPage should use useAuth itself.
-                  // For now, assuming LoginPage uses useAuth.
-                  handlePageTransition(LoginPage, { /* onLogin is handled by AuthContext */ })
+                ) : (                  handlePageTransition(LoginPage, {})
                 )
               }
             />
@@ -171,7 +155,7 @@ const InnerApp = () => {
                 isAuthenticated && user ? (
                   handlePageTransition(SettingsPage, {
                     currentUser: user,
-                    onUpdateUser: updateUser, // Use updateUser from AuthContext
+                    onUpdateUser: updateUser,
                   })
                 ) : (
                   <Navigate to="/login" replace />

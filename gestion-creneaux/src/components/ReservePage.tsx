@@ -7,7 +7,6 @@ import '../styles/components/ReservePage.css';
 import { useLanguage } from '../contexts/LanguageContext';
 import EmailConfirmation from './EmailConfirmation';
 
-// Time slot options
 const TIME_SLOTS = [
   '08:00 - 09:00',
   '09:00 - 10:00',
@@ -20,7 +19,6 @@ const TIME_SLOTS = [
   '16:00 - 17:00',
 ];
 
-// Room selector constants
 const ROOM_NUMBERS = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
 const ROOM_LETTERS = ['A', 'B', 'C', 'D'];
 const AMPHITHEATERS = ['Amphi 1', 'Amphi 2', 'Amphi Centrale'];
@@ -35,36 +33,27 @@ const ReservePage: React.FC<ReservePageProps> = ({
   onBookingComplete,
 }) => {
   const { t, language, isTranslationsLoaded } = useLanguage();
-  // Room selection state
   const [roomType, setRoomType] = useState<'regular' | 'amphi'>('regular');
   const [roomNumber, setRoomNumber] = useState('');
   const [roomLetter, setRoomLetter] = useState('');
   const [amphitheater, setAmphitheater] = useState('');
 
-  // Date selection state
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  // Time selection state
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
 
-  // Booking details state
   const [bookingTitle, setBookingTitle] = useState('');
   const [bookingDescription, setBookingDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isPageDataLoading, setIsPageDataLoading] = useState(true);
-
-  // Validation
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Step tracking
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Add new state for showing the email confirmation
   const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
   const [completedBooking, setCompletedBooking] = useState<Booking | null>(
     null,
   );
-
   useEffect(() => {
     const fetchInitialData = async () => {
       setIsPageDataLoading(true);
@@ -93,7 +82,6 @@ const ReservePage: React.FC<ReservePageProps> = ({
         }
       }
     } else if (step === 2) {
-      // Date validation not needed as calendar always has a selected date
     } else if (step === 3) {
       if (!selectedTimeSlot) {
         newErrors.selectedTimeSlot = t('validation.timeSlotRequired');
@@ -146,18 +134,13 @@ const ReservePage: React.FC<ReservePageProps> = ({
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      // Extract time data
+    setIsLoading(true);      try {
       const [startTime, endTime] = selectedTimeSlot.split(' - ');
 
-      // Get the correct room name from the selections
       const roomName = getRoomName();
 
-      // Create booking object
       const newBooking: Booking = {
-        id: Math.floor(Math.random() * 1000), // Mock ID
+        id: Math.floor(Math.random() * 1000),
         userId: currentUser.id || 0,
         title: bookingTitle,
         description: bookingDescription,
@@ -173,15 +156,10 @@ const ReservePage: React.FC<ReservePageProps> = ({
           name: roomName,
         },
         user: currentUser as User,
-      };
+      };      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Save the completed booking to show in the email confirmation
       setCompletedBooking(newBooking);
 
-      // Reset form
       setRoomType('regular');
       setRoomNumber('');
       setRoomLetter('');
@@ -195,7 +173,6 @@ const ReservePage: React.FC<ReservePageProps> = ({
         onBookingComplete(newBooking);
       }
 
-      // Show email confirmation instead of alert
       setShowEmailConfirmation(true);
     } catch (error) {
       console.error('Error creating booking:', error);
@@ -204,18 +181,13 @@ const ReservePage: React.FC<ReservePageProps> = ({
       setIsLoading(false);
     }
   };
-
-  // Function to handle email sending
   const handleSendEmail = () => {
-    // Mock email sending functionality
     console.log('Sending email confirmation...');
     setTimeout(() => {
       setShowEmailConfirmation(false);
       alert(t('email.sent'));
     }, 1000);
   };
-
-  // Render Room and Class Selection (Step 1)
   const renderRoomSelection = () => (
     <div className="form-step">
       <h2>{t('reservation.room')}</h2>
@@ -318,8 +290,6 @@ const ReservePage: React.FC<ReservePageProps> = ({
       </div>
     </div>
   );
-
-  // Render Date Selection (Step 2)
   const renderDateSelection = () => (
     <div className="form-step">
       <div className="step-header">
@@ -345,8 +315,6 @@ const ReservePage: React.FC<ReservePageProps> = ({
       </div>
     </div>
   );
-
-  // Render Time Selection (Step 3)
   const renderTimeSelection = () => (
     <div className="form-step">
       <div className="step-header">
@@ -383,8 +351,6 @@ const ReservePage: React.FC<ReservePageProps> = ({
       </div>
     </div>
   );
-
-  // Render Booking Details (Step 4)
   const renderBookingDetails = () => (
     <div className="form-step">
       <div className="step-header">
@@ -452,8 +418,6 @@ const ReservePage: React.FC<ReservePageProps> = ({
       </form>
     </div>
   );
-
-  // unified loading indicator for initial load
   if (isTranslationsLoaded === false || isPageDataLoading) {
     return (
       <div className="reserve-page-loading-container">
@@ -464,10 +428,8 @@ const ReservePage: React.FC<ReservePageProps> = ({
       </div>
     );
   }
-
   return (
     <div className="reserve-page-container">
-      {/* Keep the h1 title at the top of the page */}
       <header className="page-header">
         <h1 className="page-title-animate">{t('reservation.pageTitle')}</h1>
       </header>
@@ -492,10 +454,7 @@ const ReservePage: React.FC<ReservePageProps> = ({
         {currentStep === 2 && renderDateSelection()}
         {currentStep === 3 && renderTimeSelection()}
         {currentStep === 4 && renderBookingDetails()}
-      </div>
-
-      {/* Email confirmation modal */}
-      {showEmailConfirmation && completedBooking && (
+      </div>      {showEmailConfirmation && completedBooking && (
         <EmailConfirmation
           booking={completedBooking}
           user={currentUser}

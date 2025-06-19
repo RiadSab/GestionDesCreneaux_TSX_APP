@@ -8,14 +8,10 @@ import {
 import { API_URL } from '../auth/authUtils';
 
 const apiClient = axios.create({
-  baseURL: API_URL, // API_URL is '/api', proxy handles 'http://localhost:8080'
+  baseURL: API_URL,
 });
 
-// let currentToken: string | null = null; // Not needed if consistently using apiClient
-
-// Function to set the Authorization header with the JWT token for apiClient
 export const setAuthToken = (token: string | null) => {
-  // currentToken = token; // Not strictly needed if cancelSlot uses apiClient
   if (token) {
     apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   } else {
@@ -23,9 +19,6 @@ export const setAuthToken = (token: string | null) => {
   }
 };
 
-/**
- * Récupère toutes les salles disponibles depuis le backend.
- */
 export const getAllRooms = async (): Promise<GetAllRoomsResponse> => {
   try {
     const response = await apiClient.get<GetAllRoomsResponse>('/rooms');
@@ -36,16 +29,11 @@ export const getAllRooms = async (): Promise<GetAllRoomsResponse> => {
   }
 };
 
-/**
- * Réserve un ou plusieurs créneaux pour un utilisateur.
- * @param reservations La liste des réservations à effectuer.
- * @param userName Le nom de l'utilisateur qui effectue la réservation.
- */
 export const reserveSlots = async (reservations: ReservationRequestData[], userName: string): Promise<ReserveSlotsResponse> => {
   try {
     const response = await apiClient.post<ReserveSlotsResponse>(
       `/slots/reserve?userName=${userName}`,
-      reservations // Le corps de la requête est la liste des ReservationRequestData
+      reservations 
     );
     return response.data;
   } catch (error) {
@@ -54,10 +42,6 @@ export const reserveSlots = async (reservations: ReservationRequestData[], userN
   }
 };
 
-/**
- * Récupère les créneaux réservés par un utilisateur.
- * @param userName Le nom de l'utilisateur dont on veut récupérer les réservations.
- */
 export const getMyBookedSlots = async (userName: string): Promise<MySlotsResponse> => {
   try {
     const response = await apiClient.get<MySlotsResponse>(`/slots/my?userName=${userName}`);
@@ -68,15 +52,10 @@ export const getMyBookedSlots = async (userName: string): Promise<MySlotsRespons
   }
 };
 
-/**
- * Annule un créneau de réservation.
- * @param slotId L'ID du créneau (réservation) à annuler.
- */
 export const cancelSlot = async (slotId: number): Promise<any> => {
   const path = '/slots/cancel'; 
   console.log(`[apiService] Attempting to cancel slot (reservation) with ID: ${slotId} using apiClient. POST to ${API_URL}${path}, body: ${slotId}`);
 
-  // Pre-flight checks
   if (!API_URL) {
     const errorMessage = "[apiService] CRITICAL: API_URL is undefined or empty!";
     console.error(errorMessage);
@@ -94,12 +73,8 @@ export const cancelSlot = async (slotId: number): Promise<any> => {
   }
 
   try {
-    // apiClient.post will send slotId as the request body.
-    // It will use its configured baseURL and default headers (including Authorization if set).
     const response = await apiClient.post(path, slotId, {
       headers: {
-        // Explicitly set Content-Type, though Axios might infer it for a number payload.
-        // This ensures the backend (Spring @RequestBody Integer) correctly deserializes the raw number.
         'Content-Type': 'application/json', 
       },
     }); 
@@ -108,18 +83,17 @@ export const cancelSlot = async (slotId: number): Promise<any> => {
     return response.data;
   } catch (error: any) {
     console.error('[apiService] Error canceling slot (reservation):', error);
-    if (axios.isAxiosError(error)) { // More robust check for AxiosError
+    if (axios.isAxiosError(error)) { 
       console.error('[apiService] Axios error details:', {
         message: error.message,
         url: error.config?.url,
         method: error.config?.method,
         responseStatus: error.response?.status,
         responseData: error.response?.data,
-        // requestConfig: error.config, // Can be verbose
       });
     } else {
       console.error('[apiService] Non-Axios error:', error.message);
     }
-    throw error; // Re-throw the error so UI can handle it
+    throw error; 
   }
 };

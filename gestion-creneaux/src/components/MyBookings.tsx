@@ -2,12 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { UserBookingSlot, User, Booking } from '../types/types';
 import '../styles/components/MyBookings.css';
 import EmailConfirmation from './EmailConfirmation';
-import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from './LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
 import { getMyBookedSlots, cancelSlot } from '../services/apiService';
 import { useLanguage } from '../contexts/LanguageContext';
 import ConfirmationModal from './ConfirmationModal';
+import BookingEditModal from './BookingEditModal';
 
 interface MyBookingsProps {
   currentUser: Partial<User>;
@@ -16,52 +16,52 @@ interface MyBookingsProps {
 }
 
 const MyBookings: React.FC<MyBookingsProps> = ({ currentUser, onModifyBooking }) => {
-  const { t } = useLanguage(); // <-- Add this line at the top of your component
-  const navigate = useNavigate();
-  const [userBookings, setUserBookings] = useState<UserBookingSlot[]>([]); // Renamed and typed
+  const { t } = useLanguage();
+  const [userBookings, setUserBookings] = useState<UserBookingSlot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [filterStatus, setFilterStatus] = useState<
-    'all' | 'reserved' | 'cancelled' // Adjusted status based on UserBookingSlot
+    'all' | 'reserved' | 'cancelled'
   >('all');
   const [expandedBookingId, setExpandedBookingId] = useState<number | null>(
     null,
   );
   const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
-  const [selectedBookingForEmail, setSelectedBookingForEmail] = useState<UserBookingSlot | null>(null); // Typed
+  const [selectedBookingForEmail, setSelectedBookingForEmail] = useState<UserBookingSlot | null>(null);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [bookingToCancel, setBookingToCancel] = useState<number | null>(null);
 
-  // New explicit handler for modal cancellation
   const handleModalCancelAction = () => {
     console.log('[MyBookings] handleModalCancelAction CALLED. Closing modal.');
     setShowCancelConfirmModal(false);
     setBookingToCancel(null);
   };
 
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [bookingToEdit, setBookingToEdit] = useState<UserBookingSlot | null>(null);
+
   useEffect(() => {
     const fetchUserBookings = async () => {
       if (currentUser && currentUser.name) { 
         setIsLoading(true);
         try {
-          // setAuthToken est maintenant appelé dans AuthContext, donc pas besoin ici a priori
           const response = await getMyBookedSlots(currentUser.name);
           setUserBookings(response.slots || []); 
         } catch (error) {
           console.error('Error fetching user bookings:', error);
-          setUserBookings([]); // Set to empty array on error
+          setUserBookings([]);
         } finally {
           setIsLoading(false);
         }
       } else {
-        setUserBookings([]); // No user or username, so no bookings
+        setUserBookings([]);
         setIsLoading(false);
       }
     };
 
     fetchUserBookings();
-  }, [currentUser]); // Depend on currentUser and token
+  }, [currentUser]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -75,18 +75,14 @@ const MyBookings: React.FC<MyBookingsProps> = ({ currentUser, onModifyBooking })
   const filteredAndSortedBookings = useMemo(() => {
     let result = [...userBookings];
 
-    // Filter by status
     if (filterStatus !== 'all') {
       if (filterStatus === 'reserved') {
         result = result.filter((booking) => booking.reserved);
       } else if (filterStatus === 'cancelled') {
-        // Assuming 'cancelled' means not reserved, or you have another field for it
-        // For now, let's assume 'cancelled' means !booking.reserved if no explicit status field
         result = result.filter((booking) => !booking.reserved);
       }
     }
 
-    // Filter by search term (e.g., in room name or owner's user name)
     if (searchTerm) {
       result = result.filter(
         (booking) =>
@@ -95,7 +91,6 @@ const MyBookings: React.FC<MyBookingsProps> = ({ currentUser, onModifyBooking })
       );
     }
 
-    // Sort: e.g., by start time
     result.sort(
       (a, b) =>
         new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
@@ -124,23 +119,19 @@ const MyBookings: React.FC<MyBookingsProps> = ({ currentUser, onModifyBooking })
     setIsLoading(true);
     
     try {
-      // Directly make the API call without any other logic that might interfere
       console.log('[MyBookings] PRE-AWAIT: Calling cancelSlot API service for slotId:', bookingToCancel);
       await cancelSlot(bookingToCancel); 
       console.log('[MyBookings] POST-AWAIT: cancelSlot call completed with result:');
       
-      // Update UI after successful API call
       setUserBookings(prevBookings => 
         prevBookings.map(booking => 
           booking.id === bookingToCancel ? { ...booking, reserved: false } : booking
         )
       );
       
-      // Replace the alert with translated version
       alert(t('alerts.bookingCancelled'));
     } catch (error) {
       console.error('Error cancelling booking:', error);
-      // Replace with translation instead of error message directly
       const errorMessage = error instanceof Error && (error as any).response?.data?.message 
         ? (error as any).response.data.message 
         : t('alerts.bookingCancelError');
@@ -181,34 +172,47 @@ const MyBookings: React.FC<MyBookingsProps> = ({ currentUser, onModifyBooking })
     setShowEmailConfirmation(true);
   };
 
-  // Add this missing function
   const formatRoomDisplay = (roomName: string) => {
-    // Check if the room name contains "Amphi" (case insensitive)
     if (roomName?.toLowerCase().includes('amphi')) {
-      return roomName; // Just return the amphi name without prefix
+      return roomName;
     } else {
-      // For regular rooms, add the "Room:" prefix
       return `${t('bookings.room')}: ${roomName}`;
     }
-  };
-
-  // Remove the duplicate handleEditBooking function and keep this one
-  const handleEditBooking = (bookingId: number) => {
-    // This will require a page/modal for editing and a backend endpoint
-    navigate(`/modify-booking/${bookingId}`);
-    // Replace with translation
-    alert(t('alerts.editNotImplemented'));
   };
 
   const handleSendEmail = () => {
     console.log('Sending email confirmation for booking ID:', selectedBookingForEmail?.id);
     setTimeout(() => {
       setShowEmailConfirmation(false);
-      alert(t('alerts.emailSent'));
+      alert(t('alerts.emailSent') || 'Email sent successfully!');
     }, 1000);
   };
 
-  if (isLoading) { // Simplified loading condition
+  const handleEditBooking = (bookingId: number) => {
+    const booking = userBookings.find(b => b.id === bookingId);
+    if (booking) {
+      setBookingToEdit(booking);
+      setShowEditModal(true);
+    } else {
+      console.error('Booking not found with ID:', bookingId);
+      alert(t('alerts.bookingNotFound') || 'Booking not found');
+    }
+  };
+  
+  const handleSaveBooking = (updatedBooking: UserBookingSlot) => {
+    setUserBookings(prevBookings => 
+      prevBookings.map(booking => 
+        booking.id === updatedBooking.id ? updatedBooking : booking
+      )
+    );
+    
+    setShowEditModal(false);
+    setBookingToEdit(null);
+    
+    alert(t('alerts.bookingUpdated') || 'Booking updated successfully');
+  };
+
+  if (isLoading) {
     return (
       <div className="my-bookings-container">
         <LoadingSpinner />
@@ -218,7 +222,6 @@ const MyBookings: React.FC<MyBookingsProps> = ({ currentUser, onModifyBooking })
   }
 
   return (
-    // Normal state without 'is-loading'
     <div className="my-bookings-container">
       <h1>{t('bookings.myBookings')}</h1>
 
@@ -323,8 +326,8 @@ const MyBookings: React.FC<MyBookingsProps> = ({ currentUser, onModifyBooking })
                         <button
                           className="edit-button"
                           onClick={(e) => {
-                            e.stopPropagation(); // Stop event bubbling
-                            e.preventDefault(); // Prevent default behavior
+                            e.stopPropagation();
+                            e.preventDefault();
                             console.log(
                               'Edit button clicked for booking ID:',
                               booking.id,
@@ -332,7 +335,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ currentUser, onModifyBooking })
                             handleEditBooking(booking.id);
                           }}
                         >
-                          {t('common.edit') || 'Modifier'}
+                          {t('bookings.edit') || 'Modifier'}
                         </button>
                       </>
                     )}
@@ -354,7 +357,6 @@ const MyBookings: React.FC<MyBookingsProps> = ({ currentUser, onModifyBooking })
         />
       )}
 
-      {/* Modal Invocation */}
       {showCancelConfirmModal && (
         <ConfirmationModal
           isOpen={showCancelConfirmModal}
@@ -366,11 +368,19 @@ const MyBookings: React.FC<MyBookingsProps> = ({ currentUser, onModifyBooking })
           cancelText={t('bookings.noKeep')}
         />
       )}
+
+      {showEditModal && bookingToEdit && (
+        <BookingEditModal
+          booking={bookingToEdit}
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          onSave={handleSaveBooking}
+        />
+      )}
     </div>
   );
 };
 
-// Fonction de mappage à ajouter dans ce fichier ou un fichier d'utilitaires
 const mapUserBookingSlotToBooking = (slot: UserBookingSlot, currentUser: Partial<User>): Booking => {
   const userId = currentUser.id ?? 0;
   const userName = currentUser.name ?? 'N/A';
@@ -391,7 +401,7 @@ const mapUserBookingSlotToBooking = (slot: UserBookingSlot, currentUser: Partial
     date: slot.startTime.split('T')[0], 
     startTime: formatTimeForBooking(slot.startTime),
     endTime: formatTimeForBooking(slot.endTime),
-    spaceName: slot.room.roomName, // Use room.roomName instead of spaceName
+    spaceName: slot.room.roomName,
     status: slot.reserved ? 'confirmed' : 'cancelled',
     user: { 
       id: userId,

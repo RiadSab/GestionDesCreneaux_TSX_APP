@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-// import { useLanguage } from '../contexts/LanguageContext';
 import LoadingSpinner from './LoadingSpinner';
 import { User, Booking, Room } from '../types/types';
 import '../styles/components/ModifyBookingForm.css';
 
-// Extend the Booking type with purpose property
 type BookingWithPurpose = Booking & { purpose?: string; modifiedAt?: string; room?: Room };
 
 interface ModifyBookingFormProps {
@@ -21,7 +19,6 @@ const ModifyBookingForm: React.FC<ModifyBookingFormProps> = ({
 }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  // const { t, isTranslationsLoaded } = useLanguage();
 
   const [booking, setBooking] = useState<BookingWithPurpose | null>(null);
   const [startTime, setStartTime] = useState('');
@@ -31,13 +28,11 @@ const ModifyBookingForm: React.FC<ModifyBookingFormProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Find the booking to modify
   useEffect(() => {
     if (bookings.length > 0 && id) {
       const foundBooking = bookings.find((b) => b.id === Number(id));
       if (foundBooking) {
         setBooking(foundBooking as unknown as BookingWithPurpose);
-        // Format the date and time for the form fields
         const bookingDate = new Date(foundBooking.date);
         setDate(bookingDate.toISOString().split('T')[0]);
         setStartTime(foundBooking.startTime);
@@ -55,17 +50,14 @@ const ModifyBookingForm: React.FC<ModifyBookingFormProps> = ({
 
     if (!booking) return;
 
-    // Create date objects for the new times
     const startDateTime = new Date(`${date}T${startTime}`);
     const endDateTime = new Date(`${date}T${endTime}`);
 
-    // Validate times
     if (startDateTime >= endDateTime) {
       setError('Start time must be before end time.');
       return;
     }
 
-    // Create modified booking
     const modifiedBooking: BookingWithPurpose = {
       ...booking,
       date: date,
@@ -75,12 +67,11 @@ const ModifyBookingForm: React.FC<ModifyBookingFormProps> = ({
       modifiedAt: new Date().toISOString(),
     };
 
-    // Update the booking
     onModifyBooking(modifiedBooking as Booking);
     navigate('/bookings');
   };
 
-  if (/* !isTranslationsLoaded || */ isLoading) {
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 

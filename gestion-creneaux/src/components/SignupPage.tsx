@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Importer useNavigate
-import '../styles/components/LoginPage.css'; // Réutiliser les styles pour la cohérence
-// import { User } from '../types/types'; // User n'est plus directement utilisé ici pour la création
-import { signupUser } from '../auth/authUtils'; // Importer signupUser
-// import { useLanguage } from '../contexts/LanguageContext'; // Importer useLanguage
-
-// Le type SignupData est déjà défini dans src/types/types.ts, nous allons l'utiliser
+import { Link, useNavigate } from 'react-router-dom';
+import '../styles/components/LoginPage.css';
+import { signupUser } from '../auth/authUtils';
 import { SignupData } from '../types/types';
 
 const SignupPage: React.FC = () => {
-  // const { t } = useLanguage(); // Hook de traduction
-  const navigate = useNavigate(); // Hook pour la navigation
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<SignupData>({
-    name: '', // Garder name si votre formulaire le demande, même si non envoyé directement
+    name: '',
     username: '',
     email: '',
     password: '',
@@ -63,13 +58,12 @@ const SignupPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccessMessage(''); // Réinitialiser le message de succès
+    setSuccessMessage('');
 
     if (validateForm()) {
       setIsLoading(true);
-      setErrors({}); // Réinitialiser les erreurs API précédentes
+      setErrors({});
 
-      // Préparer les données pour l'API (userName, email, password)
       const apiData = {
         username: formData.username,
         email: formData.email,
@@ -77,19 +71,17 @@ const SignupPage: React.FC = () => {
       };
 
       try {
-        const response = await signupUser(apiData as SignupData); // signupUser attend SignupData
+        const response = await signupUser(apiData as SignupData);
         console.log('Signup successful:', response);
         setSuccessMessage(response.message || 'Account created successfully. Redirecting to login...');
-        // Optionnel: rediriger après un court délai ou après clic sur un message
         setTimeout(() => {
           navigate('/login');
-        }, 3000); // Redirige vers le login après 3 secondes
+        }, 3000);
       } catch (error: any) {
         console.error('Signup failed:', error);
         if (error && error.message) {
           setErrors({ api: error.message });
         } else if (error && error.error) {
-          // Cas où l'erreur est dans error.error (ex: CONFLICT)
           setErrors({ api: error.error });
         } else {
           setErrors({ api: 'Signup failed. Please try again.' });
@@ -193,7 +185,6 @@ const SignupPage: React.FC = () => {
             )}
           </div>
 
-          {/* Affichage de l'erreur API */}
           {errors.api && (
             <div className="error-message api-error">{errors.api}</div>
           )}

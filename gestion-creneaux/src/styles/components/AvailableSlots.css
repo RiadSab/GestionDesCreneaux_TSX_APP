@@ -14,7 +14,7 @@
   font-size: 1.8rem;
 }
 
-/* Remove underline from h1 and other headings */
+
 .available-slots-container h1,
 .time-slots-container h2,
 .available-slots-header h1 {
@@ -171,7 +171,7 @@
   }
 }
 
-/* Calendar View */
+
 .calendar-view {
   overflow-y: auto;
   max-height: 600px;
@@ -236,7 +236,7 @@
   background-color: #2563eb;
 }
 
-/* List View */
+
 .list-view {
   overflow-x: auto;
 }
@@ -283,7 +283,7 @@
   color: #6b7280;
 }
 
-/* Responsive styles */
+
 @media (max-width: 768px) {
   .available-slots-container {
     padding: 1rem;

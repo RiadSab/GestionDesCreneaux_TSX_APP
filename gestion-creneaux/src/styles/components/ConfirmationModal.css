@@ -67,7 +67,7 @@
   background-color: #388E3C !important;
 }
 
-/* Ensure both buttons are clearly visible and separated */
+
 .cancel-button, .confirm-button {
   min-width: 120px !important;
   text-align: center !important;

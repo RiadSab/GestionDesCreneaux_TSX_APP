@@ -41,47 +41,47 @@
 
 .bookings-controls {
   display: flex;
-  align-items: flex-end; /* Align items to the bottom for consistent baseline */
+  align-items: flex-end; 
   justify-content: space-between;
   margin-bottom: 1.5rem;
-  gap: 1.5rem; /* Increased gap between elements */
+  gap: 1.5rem; 
 }
 
-/* Fix search bar to match design exactly */
+
 .search-bar {
   flex: 0 1 400px;
   max-width: 60%;
   display: flex;
-  align-items: stretch; /* Make elements stretch to same height */
-  gap: 0.25rem; /* Add a small gap between input and button */
+  align-items: stretch; 
+  gap: 0.25rem; 
 }
 
 .search-bar input {
   width: 100%;
   padding: 0.75rem 1rem;
   border: 1px solid #d1d5db;
-  border-radius: 0.375rem; /* Restore full rounded corners */
-  font-size: 0.875rem; /* Consistent font size */
-  height: 100%; /* Ensure consistent height with parent's align-items: stretch */
-  box-sizing: border-box; /* Include padding and border in height calculation */
+  border-radius: 0.375rem; 
+  font-size: 0.875rem; 
+  height: 100%; 
+  box-sizing: border-box; 
 }
 
-/* Style the search button to attach directly to input */
+
 .search-button {
   padding: 0.75rem 1.25rem;
   background-color: #3b82f6;
   color: white;
-  border: 1px solid transparent; /* Add transparent border to match input's border width */
-  border-radius: 0.375rem; /* Restore full rounded corners */
-  font-size: 0.875rem; /* Consistent font size */
+  border: 1px solid transparent; 
+  border-radius: 0.375rem; 
+  font-size: 0.875rem; 
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
   white-space: nowrap;
-  height: 100%; /* Ensure consistent height with parent's align-items: stretch */
-  box-sizing: border-box; /* Include padding and border in height calculation */
-  display: inline-flex; /* Helps with internal vertical alignment of text */
-  align-items: center; /* Vertically center text within the button */
+  height: 100%; 
+  box-sizing: border-box; 
+  display: inline-flex; 
+  align-items: center; 
   justify-content: center;
 }
 
@@ -96,37 +96,33 @@
 .filter-options {
   display: flex;
   gap: 1rem;
-  flex-wrap: nowrap; /* Prevent wrapping */
-  flex: 0 0 auto; /* Don't allow filters to shrink */
-  white-space: nowrap; /* Keep text on one line */
+  flex-wrap: nowrap; 
+  flex: 0 0 auto; 
+  white-space: nowrap; 
 }
 
 .filter-group {
-  /* display: flex; align-items: center; gap: 0.5rem; */ /* Remove old flex styles */
+   
 }
 
 .filter-group label {
-  display: block; /* Make label take its own line */
-  margin-bottom: 0.25rem; /* Space between label and select */
+  display: block; 
+  margin-bottom: 0.25rem; 
   font-weight: 500;
   color: #4b5563;
-  font-size: 0.875rem; /* Consistent font size */
+  font-size: 0.875rem; 
 }
 
 .filter-group select {
   padding: 0.75rem;
   border: 1px solid #d1d5db;
   border-radius: 0.375rem;
-  font-size: 0.875rem; /* Consistent font size */
+  font-size: 0.875rem; 
   background-color: white;
-  min-width: 100px; /* Adjust as needed, e.g., to fit "Cancelled" */
-  box-sizing: border-box; /* Include padding and border in height calculation */
-  /* Explicitly set height to match search input/button.
-     Input height: (0.75rem padding * 2) + (approx 1.2 * 0.875rem line-height) + (1px border * 2)
-     Assuming 1rem = 16px: (12px * 2) + (1.2 * 14px) + 2px = 24px + 16.8px + 2px = 42.8px.
-     Let's use 2.625rem (42px) or adjust slightly for visual perfection.
-  */
-  height: 2.625rem; /* Approx 42px. Adjust if it's slightly off. */
+  min-width: 100px; 
+  box-sizing: border-box; 
+  
+  height: 2.625rem; 
 }
 
 .no-bookings {
@@ -293,7 +289,7 @@
   }
 
   .search-bar {
-    max-width: 100%; /* Full width on mobile */
+    max-width: 100%; 
     margin-bottom: 1rem;
   }
 

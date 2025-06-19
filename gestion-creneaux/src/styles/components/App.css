@@ -1,4 +1,4 @@
-/* Base styles for the entire application */
+
 * {
   margin: 0;
   padding: 0;
@@ -84,7 +84,7 @@ main.content {
   background-color: #c0392b;
 }
 
-/* Form styles */
+
 .form-group {
   margin-bottom: 1rem;
 }

@@ -1,5 +1,4 @@
 export const frTranslations = {
-  // Navigation
   'nav.dashboard': 'Tableau de bord',
   'nav.bookings': 'Mes réservations',
   'nav.reserve': 'Réserver',
@@ -9,7 +8,6 @@ export const frTranslations = {
   'nav.logout': 'Déconnexion',
   'app.title': 'Réservation de Salles',
 
-  // App general
   'app.loading': 'Chargement...',
   'app.confirm': 'Confirmer',
   'app.cancel': 'Annuler',
@@ -19,7 +17,6 @@ export const frTranslations = {
   'app.back': 'Retour',
   'app.next': 'Suivant',
 
-  // Auth related
   'auth.pleaseLogin': 'Veuillez vous connecter pour accéder à cette page',
   'login.title': 'Connexion',
   'login.username': 'Nom d\'utilisateur',
@@ -38,7 +35,6 @@ export const frTranslations = {
   'signup.alreadyAccount': 'Vous avez déjà un compte?',
   'signup.login': 'Se connecter',
 
-  // Dashboard
   'dashboard.welcome': 'Bienvenue',
   'dashboard.currentDate': 'Date actuelle:',
   'dashboard.quickActions': 'Actions rapides',
@@ -64,7 +60,6 @@ export const frTranslations = {
   'dashboard.minutesSuffixShort': 'min',
   'dashboard.now': 'Maintenant',
 
-  // Bookings
   'bookings.myBookings': 'Mes réservations',
   'bookings.noBookings': 'Aucune réservation trouvée. Essayez d\'ajuster vos filtres ou créez une nouvelle réservation.',
   'bookings.search': 'Rechercher par salle ou utilisateur...',
@@ -90,7 +85,6 @@ export const frTranslations = {
   'bookings.noKeep': 'Non, conserver la réservation',
   'bookings.description': 'Description',
 
-  // Reservation Calendar
   'reservation.selectRoom': 'Sélectionner une salle',
   'reservation.roomLetter': 'Lettre de la salle',
   'reservation.roomNumber': 'Numéro de la salle',
@@ -112,7 +106,6 @@ export const frTranslations = {
   'reservation.loading': 'Chargement...',
   'reservation.failedToLoadRooms': 'Échec du chargement des salles.',
 
-  // Available Slots
   'slots.availableSlots': 'Créneaux disponibles',
   'slots.findAndBook': 'Trouvez et réservez des créneaux horaires disponibles',
   'slots.selectDate': 'Sélectionner une date:',
@@ -128,7 +121,6 @@ export const frTranslations = {
   'slots.tryDifferent': 'Essayez de sélectionner une date différente ou un autre type de salle.',
   'slots.book': 'Réserver',
 
-  // Profile
   'profile.title': 'Profil',
   'profile.personalInfo': 'Informations personnelles',
   'profile.name': 'Nom',
@@ -140,7 +132,6 @@ export const frTranslations = {
   'profile.completedBookings': 'Réservations terminées',
   'profile.cancelledBookings': 'Réservations annulées',
 
-  // Settings
   'settings.title': 'Paramètres',
   'settings.account': 'Compte',
   'settings.notifications': 'Notifications',
@@ -161,7 +152,6 @@ export const frTranslations = {
   'settings.browserNotifications': 'Notifications du navigateur',
   'settings.browserNotificationsDesc': 'Recevoir des notifications dans votre navigateur web',
 
-  // Email Confirmation
   'email.preview': 'Aperçu de l\'email',
   'email.confirmation': 'Confirmation de réservation',
   'email.bookingConfirmed': 'Réservation confirmée!',
@@ -178,7 +168,6 @@ export const frTranslations = {
   'email.send': 'Envoyer l\'email',
   'email.close': 'Fermer',
 
-  // Booking details
   'booking.title': 'Titre',
   'booking.date': 'Date',
   'booking.time': 'Heure',
@@ -188,7 +177,6 @@ export const frTranslations = {
   'booking.confirmed': 'Confirmé',
   'booking.cancelled': 'Annulé',
 
-  // Alert messages
   'alerts.bookingCancelled': 'Réservation annulée avec succès',
   'alerts.bookingCancelError': 'Échec de l\'annulation de la réservation. Veuillez réessayer.',
   'alerts.emailSent': 'Email envoyé avec succès !',

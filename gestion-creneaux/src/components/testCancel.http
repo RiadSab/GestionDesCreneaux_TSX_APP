@@ -1,5 +1,0 @@
-### Cancel a slot
-POST http://localhost:8080/api/slots/cancel
-Content-Type: application/json
-
-15

@@ -18,7 +18,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
   }, [currentUser]);
 
   const fetchUserActivity = async () => {
-    // Simulated API call to get user activity statistics
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     setActivityStats({

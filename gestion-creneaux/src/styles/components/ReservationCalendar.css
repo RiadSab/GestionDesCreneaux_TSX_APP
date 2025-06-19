@@ -279,7 +279,7 @@ h2 {
   text-decoration: underline;
 }
 
-/* New styles for the step-based form */
+
 .reservation-form-container {
   background: white;
   border-radius: 8px;
@@ -407,7 +407,7 @@ h2 {
   color: #111827;
 }
 
-/* Room type selector */
+
 .room-type-selector {
   display: flex;
   margin-bottom: 1.5rem;

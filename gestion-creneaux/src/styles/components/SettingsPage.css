@@ -263,16 +263,16 @@ input:checked + .toggle-slider:before {
   padding: 1.5rem;
 }
 
-/* Remove underline from headings */
+
 .settings-container h1,
 .settings-header h1,
 .settings-page-container h1,
 .settings-content h2 {
   text-decoration: none !important;
-  position: relative; /* Reset positioning context */
+  position: relative; 
 }
 
-/* Override any ::after pseudo-element that might be creating an underline */
+
 .settings-container h1::after,
 .settings-header h1::after,
 .settings-page-container h1::after,
@@ -281,7 +281,7 @@ input:checked + .toggle-slider:before {
   content: none !important;
 }
 
-/* Target any span within the headings */
+
 .settings-container h1 span,
 .settings-header h1 span,
 .settings-page-container h1 span,
@@ -290,7 +290,7 @@ input:checked + .toggle-slider:before {
   border-bottom: none !important;
 }
 
-/* Remove any ::after on spans within headings */
+
 .settings-container h1 span::after,
 .settings-header h1 span::after,
 .settings-page-container h1 span::after,

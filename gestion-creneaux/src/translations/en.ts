@@ -1,5 +1,4 @@
 export const enTranslations = {
-  // Navigation
   'nav.dashboard': 'Dashboard',
   'nav.bookings': 'My Bookings',
   'nav.reserve': 'Reserve',
@@ -9,7 +8,6 @@ export const enTranslations = {
   'nav.logout': 'Logout',
   'app.title': 'Room Booking',
 
-  // App general
   'app.loading': 'Loading...',
   'app.confirm': 'Confirm',
   'app.cancel': 'Cancel',
@@ -201,4 +199,6 @@ export const enTranslations = {
   'alerts.emailSent': 'Email sent successfully!',
   'alerts.confirmCancellation': 'Are you sure you want to cancel this booking?',
   'alerts.editNotImplemented': 'Edit functionality not yet fully implemented with backend.',
+  'alerts.bookingUpdated': 'Booking updated successfully!',
+  'alerts.bookingNotFound': 'Booking not found',
 };

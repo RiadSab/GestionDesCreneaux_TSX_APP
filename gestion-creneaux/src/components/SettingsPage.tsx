@@ -47,10 +47,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     setIsLoading(true);
 
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 800));
 
-      // Reset form
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
@@ -79,7 +77,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   const handleAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    // Clear any existing error if email is being changed
     if (name === 'email') {
       setEmailError('');
     }
@@ -103,7 +100,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   };
 
   const saveSettings = async () => {
-    // Validate email before saving
     if (settings.account.email && !validateEmail(settings.account.email)) {
       return;
     }
@@ -111,10 +107,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     setIsLoading(true);
 
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 800));
 
-      // Update the user information in the parent component
       onUpdateUser({
         name: settings.account.name,
         email: settings.account.email,
@@ -129,7 +123,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     }
   };
 
-  // Wait for translations to load
   if (!isTranslationsLoaded) {
     return (
       <div className="settings-container">

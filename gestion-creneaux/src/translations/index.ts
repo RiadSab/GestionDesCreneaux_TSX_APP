@@ -1,16 +1,13 @@
 import enTranslationsData from './en.json';
 import frTranslationsData from './fr.json';
 
-// Define the type for translations
 type TranslationsType = {
   [key: string]: string;
 };
 
-// Create translation objects
 export const enTranslations: TranslationsType = enTranslationsData;
 export const frTranslations: TranslationsType = frTranslationsData;
 
-// A function to get the appropriate translation based on language
 export const getTranslations = (language: string = 'en'): TranslationsType => {
   switch (language) {
     case 'en':

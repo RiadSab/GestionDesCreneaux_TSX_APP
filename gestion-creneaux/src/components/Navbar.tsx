@@ -10,7 +10,6 @@ const Navbar: React.FC<NavbarProps> = ({ userName, onLogout }) => {
   const { t, language, setLanguage } = useLanguage();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // Handle logout
   const handleLogout = () => {
     onLogout();
     navigate('/login');

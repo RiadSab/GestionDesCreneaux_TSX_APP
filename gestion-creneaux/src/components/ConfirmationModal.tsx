@@ -20,33 +20,25 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onCancel,
   confirmText,
   cancelText,
-}) => {
-  const { t } = useLanguage(); // Get translation function
+}) => {  const { t } = useLanguage();
   
-  // Use useCallback to prevent recreating functions on each render
   const handleConfirmClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
-    e.stopPropagation(); // Stop event from reaching overlay
+    e.stopPropagation();
     console.log('[ConfirmationModal] Confirm button clicked with isolated handler');
-    // Call onConfirm directly without nesting in setTimeout
     onConfirm();
   }, [onConfirm]);
-
   const handleCancelClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     console.log('[ConfirmationModal] Cancel button clicked with isolated handler');
     onCancel();
   }, [onCancel]);
-
-  // Prevent clicks on modal content from closing it
   const handleModalContentClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
   }, []);
 
-  // Handle overlay click
   const handleOverlayClick = useCallback((e: React.MouseEvent) => {
-    // Only handle clicks directly on the overlay, not on children
     if (e.target === e.currentTarget) {
       console.log('[ConfirmationModal] Overlay clicked - cancelling');
       onCancel();

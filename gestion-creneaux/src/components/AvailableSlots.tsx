@@ -4,14 +4,13 @@ import { TimeSlot, User } from '../types/types';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { Value } from 'react-calendar/dist/cjs/shared/types';
-import { useLanguage } from '../contexts/LanguageContext'; // Uncomment this
+import { useLanguage } from '../contexts/LanguageContext';
 import '../styles/components/AvailableSlots.css';
 
 interface AvailableSlotsProps {
   currentUser: Partial<User>;
 }
 
-// Define room type keys for consistency
 const ROOM_TYPE_KEYS = {
   ALL: 'slots.allRooms',
   REGULAR: 'slots.regularRooms',
