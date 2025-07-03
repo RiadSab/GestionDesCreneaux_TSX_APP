@@ -3,8 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../styles/components/LoginPage.css';
 import { signupUser } from '../auth/authUtils';
 import { SignupData } from '../types/types';
+import { useLanguage } from '../contexts/LanguageContext';
+import LoadingSpinner from './LoadingSpinner';
 
 const SignupPage: React.FC = () => {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<SignupData>({
     name: '',
@@ -29,27 +32,27 @@ const SignupPage: React.FC = () => {
     const newErrors: Partial<SignupData & { api?: string }> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Full name is required';
+      newErrors.name = t('signup.nameRequired') || 'Full name is required';
     }
 
     if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
+      newErrors.username = t('signup.usernameRequired') || 'Username is required';
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t('signup.emailRequired') || 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = t('signup.emailInvalid') || 'Email is invalid';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('signup.passwordRequired') || 'Password is required';
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = t('signup.passwordTooShort') || 'Password must be at least 6 characters';
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = t('signup.passwordMismatch') || 'Passwords do not match';
     }
 
     setErrors(newErrors);
@@ -73,7 +76,7 @@ const SignupPage: React.FC = () => {
       try {
         const response = await signupUser(apiData as SignupData);
         console.log('Signup successful:', response);
-        setSuccessMessage(response.message || 'Account created successfully. Redirecting to login...');
+        setSuccessMessage(response.message || t('signup.successMessage') || 'Account created successfully. Redirecting to login...');
         setTimeout(() => {
           navigate('/login');
         }, 3000);
@@ -84,7 +87,7 @@ const SignupPage: React.FC = () => {
         } else if (error && error.error) {
           setErrors({ api: error.error });
         } else {
-          setErrors({ api: 'Signup failed. Please try again.' });
+          setErrors({ api: t('signup.signupFailed') || 'Signup failed. Please try again.' });
         }
       } finally {
         setIsLoading(false);
@@ -92,23 +95,31 @@ const SignupPage: React.FC = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="login-container">
+        <div className="login-card">
+          <LoadingSpinner />
+          <p>{t('app.loading') || 'Loading...'}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>Create Account</h2>
+        <h2>{t('signup.title') || 'Create Account'}</h2>
 
         {successMessage && (
-          <div
-            className="success-message"
-            style={{ color: 'green', marginBottom: '15px' }}
-          >
+          <div className="success-message">
             {successMessage}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name">Full Name</label>
+            <label htmlFor="name">{t('signup.fullName') || 'Full Name'}</label>
             <input
               type="text"
               id="name"
@@ -116,13 +127,13 @@ const SignupPage: React.FC = () => {
               value={formData.name}
               onChange={handleChange}
               className={errors.name ? 'input-error' : ''}
-              placeholder="John Doe"
+              placeholder={t('signup.fullNamePlaceholder') || 'John Doe'}
             />
             {errors.name && <div className="error-message">{errors.name}</div>}
           </div>
 
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">{t('signup.username') || 'Username'}</label>
             <input
               type="text"
               id="username"
@@ -130,7 +141,7 @@ const SignupPage: React.FC = () => {
               value={formData.username}
               onChange={handleChange}
               className={`form-input ${errors.username ? 'input-error' : ''}`}
-              placeholder="johndoe"
+              placeholder={t('signup.usernamePlaceholder') || 'johndoe'}
             />
             {errors.username && (
               <div className="error-message">{errors.username}</div>
@@ -138,7 +149,7 @@ const SignupPage: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">{t('signup.email') || 'Email'}</label>
             <input
               type="email"
               id="email"
@@ -146,7 +157,7 @@ const SignupPage: React.FC = () => {
               value={formData.email}
               onChange={handleChange}
               className={errors.email ? 'input-error' : ''}
-              placeholder="john@example.com"
+              placeholder={t('signup.emailPlaceholder') || 'john@example.com'}
             />
             {errors.email && (
               <div className="error-message">{errors.email}</div>
@@ -154,7 +165,7 @@ const SignupPage: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">{t('signup.password') || 'Password'}</label>
             <input
               type="password"
               id="password"
@@ -170,7 +181,7 @@ const SignupPage: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
+            <label htmlFor="confirmPassword">{t('signup.confirmPassword') || 'Confirm Password'}</label>
             <input
               type="password"
               id="confirmPassword"
@@ -190,13 +201,13 @@ const SignupPage: React.FC = () => {
           )}
 
           <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? 'Loading...' : 'Sign Up'}
+            {isLoading ? (t('app.loading') || 'Loading...') : (t('signup.signupButton') || 'Sign Up')}
           </button>
         </form>
 
         <div className="login-footer">
           <p>
-            Already have an account? <Link to="/login">Sign in</Link>
+            {t('signup.alreadyHaveAccount') || 'Already have an account?'} <Link to="/login">{t('signup.signIn') || 'Sign in'}</Link>
           </p>
         </div>
       </div>

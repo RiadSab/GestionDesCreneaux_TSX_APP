@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Booking, DashboardProps, RoomDTO, UserBookingSlot } from '../types/types';
+import { DashboardProps, UserBookingSlot } from '../types/types';
 import { useLanguage } from '../contexts/LanguageContext';
 import LoadingSpinner from './LoadingSpinner';
 import '../styles/components/Dashboard.css';
@@ -8,15 +8,14 @@ import { getAllRooms, getMyBookedSlots } from '../services/apiService';
 import { useAuth } from '../contexts/AuthContext';
 
 const Dashboard: React.FC<DashboardProps> = () => {
-  const { t, language, isTranslationsLoaded } = useLanguage();
-  const { user: currentUser, token } = useAuth();
+  const { t, language } = useLanguage();
+  const { user: currentUser, token } = useAuth();  const navigate = useNavigate();
   const [upcomingBookings, setUpcomingBookings] = useState<UserBookingSlot[]>([]);
-  const [allRooms, setAllRooms] = useState<RoomDTO[]>([]);
   const [availableRoomsSummary, setAvailableRoomsSummary] = useState<{
     [key: string]: number;
   }>({});
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchDashboardData = async () => {
       if (!currentUser || !token || !currentUser.name) {
@@ -28,10 +27,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
         const [roomsResponse, bookingsResponse] = await Promise.all([
           getAllRooms(),
           getMyBookedSlots(currentUser.name),
-        ]);
-
-        if (roomsResponse && Array.isArray(roomsResponse.rooms)) {
-          setAllRooms(roomsResponse.rooms);
+        ]);        if (roomsResponse && Array.isArray(roomsResponse.rooms)) {
           const regularRooms = roomsResponse.rooms.filter(r => !r.roomLetter.toUpperCase().startsWith('A')).length;
           const amphitheaters = roomsResponse.rooms.filter(r => r.roomLetter.toUpperCase().startsWith('A')).length;
           setAvailableRoomsSummary({
@@ -52,25 +48,23 @@ const Dashboard: React.FC<DashboardProps> = () => {
           setUpcomingBookings(upcoming);
         } else {
           console.error('Failed to parse bookings data:', bookingsResponse);
-        }
-
-      } catch (error) {
+        }      } catch (error) {
         console.error('Error fetching dashboard data:', error);
         setUpcomingBookings([]);
-        setAllRooms([]);
         setAvailableRoomsSummary({ 'Regular Rooms': 0, Amphitheaters: 0, Total: 0 });
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (isTranslationsLoaded && currentUser && token) {
+    if (currentUser && token) {
         fetchDashboardData();
     } else if (!currentUser || !token) {
         setIsLoading(false);
     }
-  }, [currentUser, token, isTranslationsLoaded]);
-  const getTimeRemaining = (dateStr: string, timeStr?: string) => {
+  }, [currentUser, token]);
+
+  const getTimeRemaining = (dateStr: string) => {
     const now = new Date();
     const bookingDate = new Date(dateStr);
 
@@ -91,7 +85,8 @@ const Dashboard: React.FC<DashboardProps> = () => {
     }
     if (diffHours > 0) {
       remainingString += `${diffHours}${t(diffDays > 0 ? 'dashboard.hoursSuffixShort' : 'dashboard.hoursSuffix')} `;
-    }    if (diffMinutes > 0 || (diffDays === 0 && diffHours === 0)) {
+    }
+    if (diffMinutes > 0 || (diffDays === 0 && diffHours === 0)) {
       remainingString += `${diffMinutes}${t(diffHours > 0 || diffDays > 0 ? 'dashboard.minutesSuffixShort' : 'dashboard.minutesSuffix')}`;
     }
 
@@ -115,10 +110,8 @@ const Dashboard: React.FC<DashboardProps> = () => {
         hour12: false
     });
   };
-  const translate = (key: string): string => {
-    return t(key);
-  };
-  if (!isTranslationsLoaded || isLoading) {
+
+  if (isLoading) {
     return (
       <div className="dashboard-container">
         <div className="loading-state">
@@ -148,11 +141,12 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   return (
     <div className="dashboard-container">
-      <header className="dashboard-header">        <h1>
+      <header className="dashboard-header">
+        <h1>
           {t('dashboard.welcome')}, {currentUser.name || 'User'}
         </h1>
         <p className="current-date">
-          {translate('dashboard.currentDate')}{' '}
+          {t('dashboard.currentDate')}{' '}
           {new Date().toLocaleDateString(
             language === 'fr' ? 'fr-FR' : 'en-US',
             {
@@ -165,30 +159,33 @@ const Dashboard: React.FC<DashboardProps> = () => {
         </p>
       </header>
 
-      <div className="dashboard-grid">        <div className="dashboard-card quick-actions">
-          <h2>{translate('dashboard.quickActions')}</h2>
+      <div className="dashboard-grid">
+        <div className="dashboard-card quick-actions">
+          <h2>{t('dashboard.quickActions')}</h2>
           <div className="action-buttons">
             <button
               className="action-button"
               onClick={() => navigate('/reserve')}
             >
               <span className="action-icon">+</span>
-              {translate('dashboard.bookRoom')}
+              {t('dashboard.bookRoom')}
             </button>
             <button
               className="action-button"
               onClick={() => navigate('/bookings')}
             >
               <span className="action-icon">📋</span>
-              {translate('dashboard.viewBookings')}
+              {t('dashboard.viewBookings')}
             </button>
           </div>
-        </div>        <div className="dashboard-card upcoming-bookings">
+        </div>
+
+        <div className="dashboard-card upcoming-bookings">
           <h2>{t('dashboard.upcomingBookings')}</h2>
           {upcomingBookings.length === 0 ? (
             <div className="empty-state">
-              <p>{translate('dashboard.noUpcomingBookings')}</p>
-              <Link to="/reserve">{translate('dashboard.bookNow')}</Link>
+              <p>{t('dashboard.noUpcomingBookings')}</p>
+              <Link to="/reserve">{t('dashboard.bookNow')}</Link>
             </div>
           ) : (
             <div className="bookings-list">
@@ -216,34 +213,38 @@ const Dashboard: React.FC<DashboardProps> = () => {
               )}
             </div>
           )}
-        </div>        <div className="dashboard-card rooms-availability">
-          <h2>{translate('dashboard.availability')}</h2>
+        </div>
+
+        <div className="dashboard-card rooms-availability">
+          <h2>{t('dashboard.availability')}</h2>
           <div className="availability-stats">
             {Object.entries(availableRoomsSummary).map(([roomType, count]) => {
               const translatedRoomType =
                 roomType === 'Regular Rooms'
-                  ? translate('slots.regularRooms')
+                  ? t('slots.regularRooms')
                   : roomType === 'Amphitheaters'
-                  ? translate('slots.amphitheaters')
+                  ? t('slots.amphitheaters')
                   : roomType === 'Total'
-                  ? translate('dashboard.total')
+                  ? t('dashboard.total')
                   : roomType;
 
               return (
                 <div key={roomType} className="availability-item">
                   <div>{translatedRoomType}</div>
                   <div>
-                    {count} {translate('dashboard.availableRooms')}
+                    {count} {t('dashboard.availableRooms')}
                   </div>
                 </div>
               );
             })}
           </div>
           <Link to="/timeslots" className="check-availability-link">
-            {translate('dashboard.checkAvailability')} →
+            {t('dashboard.checkAvailability')} →
           </Link>
-        </div>        <div className="dashboard-card recent-activity">
-          <h2>{translate('dashboard.activitySummary')}</h2>
+        </div>
+
+        <div className="dashboard-card recent-activity">
+          <h2>{t('dashboard.activitySummary')}</h2>
           <div className="activity-summary">
             <div className="activity-stat">
               <div className="stat-value">{upcomingBookings.length}</div>
@@ -252,18 +253,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
             <div className="activity-stat">
               <div className="stat-value">{bookingsToday}</div>
               <div className="stat-label">{t('dashboard.bookingsToday')}</div>
-            </div>
-            <div className="activity-stat">
-              <div className="stat-value">0</div>
-              <div className="stat-label">
-                {translate('dashboard.bookingsToday')}
-              </div>
-            </div>
-            <div className="activity-stat">
-              <div className="stat-value">0</div>
-              <div className="stat-label">
-                {translate('dashboard.pendingApprovals')}
-              </div>
             </div>
           </div>
         </div>

@@ -20,18 +20,16 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onCancel,
   confirmText,
   cancelText,
-}) => {  const { t } = useLanguage();
-  
+}) => {
+  const { t } = useLanguage();
   const handleConfirmClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('[ConfirmationModal] Confirm button clicked with isolated handler');
     onConfirm();
   }, [onConfirm]);
   const handleCancelClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('[ConfirmationModal] Cancel button clicked with isolated handler');
     onCancel();
   }, [onCancel]);
   const handleModalContentClick = useCallback((e: React.MouseEvent) => {
@@ -40,7 +38,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   const handleOverlayClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      console.log('[ConfirmationModal] Overlay clicked - cancelling');
       onCancel();
     }
   }, [onCancel]);

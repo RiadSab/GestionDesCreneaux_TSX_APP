@@ -16,20 +16,21 @@ import Dashboard from './Dashboard';
 import AvailableSlots from './AvailableSlots';
 import ProfilePage from './ProfilePage';
 import SettingsPage from './SettingsPage';
-import ModifyBookingForm from './ModifyBookingForm';
 import EditBookingForm from './EditBookingForm';
 import { LanguageProvider } from '../contexts/LanguageContext';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import LoadingSpinner from './LoadingSpinner';
-import ReservePage from './ReservePage';
 
+// Create a wrapper component to handle transitions
 const PageTransitionWrapper = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const [isPageLoading, setIsPageLoading] = useState(true);
 
   useEffect(() => {
+    // Set loading state when location changes
     setIsPageLoading(true);
 
+    // Small delay to ensure component has time to prepare
     const timer = setTimeout(() => {
       setIsPageLoading(false);
     }, 300);
@@ -42,29 +43,34 @@ const PageTransitionWrapper = ({ children }: { children: React.ReactNode }) => {
   }
 
   return <>{children}</>;
-};
+}; 
 
+// InnerApp component to use AuthContext
 const InnerApp = () => {
   const { user, isAuthenticated, isLoading, logout, updateUser } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
 
-  const handleModifyBooking = (modifiedBooking: Booking) => {
-    console.log('Modifying booking:', modifiedBooking);    setBookings((prevBookings) => {
-      const exists = prevBookings.some((b) => b.id === modifiedBooking.id);
+  const handleUpdateBooking = (updatedBooking: Booking) => {
+    console.log('Updating booking:', updatedBooking);
+
+    setBookings((prevBookings) => {
+      const exists = prevBookings.some((b) => b.id === updatedBooking.id);
 
       let updatedBookings;
       if (exists) {
         updatedBookings = prevBookings.map((booking) =>
-          booking.id === modifiedBooking.id ? modifiedBooking : booking,
+          booking.id === updatedBooking.id ? updatedBooking : booking,
         );
       } else {
-        updatedBookings = [...prevBookings, modifiedBooking];
+        updatedBookings = [...prevBookings, updatedBooking];
       }
 
       console.log('Updated bookings array:', updatedBookings);
       return updatedBookings;
     });
   };
+
+  // Function to handle page transitions
   const handlePageTransition = (
     Component: React.ComponentType<any>,
     props: any,
@@ -75,8 +81,9 @@ const InnerApp = () => {
       </PageTransitionWrapper>
     );
   };
+
   if (isLoading) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner />; // Show loading spinner while auth state is loading
   }
 
   return (
@@ -85,13 +92,13 @@ const InnerApp = () => {
         {isAuthenticated && user && <Navbar userName={user.name} onLogout={logout} />}
 
         <main className="content">
-          <Routes>
-            <Route
+          <Routes>            <Route
               path="/login"
               element={
                 isAuthenticated ? (
                   <Navigate to="/dashboard" replace />
-                ) : (                  handlePageTransition(LoginPage, {})
+                ) : (
+                  handlePageTransition(LoginPage, {})
                 )
               }
             />
@@ -122,7 +129,7 @@ const InnerApp = () => {
                   handlePageTransition(MyBookings, {
                     currentUser: user,
                     bookings: bookings,
-                    onModifyBooking: handleModifyBooking,
+                    onModifyBooking: handleUpdateBooking,
                   })
                 ) : (
                   <Navigate to="/login" replace />
@@ -155,7 +162,7 @@ const InnerApp = () => {
                 isAuthenticated && user ? (
                   handlePageTransition(SettingsPage, {
                     currentUser: user,
-                    onUpdateUser: updateUser,
+                    onUpdateUser: updateUser, // Use updateUser from AuthContext
                   })
                 ) : (
                   <Navigate to="/login" replace />
@@ -177,25 +184,11 @@ const InnerApp = () => {
               }
             />
             <Route
-              path="/modify-booking/:id"
-              element={
-                isAuthenticated && user ? (
-                  handlePageTransition(ModifyBookingForm, {
-                    currentUser: user,
-                    bookings: bookings,
-                    onModifyBooking: handleModifyBooking,
-                  })
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              }
-            />
-            <Route
               path="/edit-booking/:bookingId"
               element={
                 user ? (
                   handlePageTransition(EditBookingForm, {
-                    onUpdateBooking: handleModifyBooking,
+                    onUpdateBooking: handleUpdateBooking,
                   })
                 ) : (
                   <Navigate to="/login" replace />

@@ -12,7 +12,6 @@ interface LanguageContextType {
   language: Language; // Langue actuelle
   setLanguage: (lang: Language) => void; // Fonction pour changer la langue
   t: (key: string) => string; // Fonction de traduction
-  isTranslationsLoaded: boolean; // Indique si les traductions sont chargées
 }
 
 // Stocke les traductions pour chaque langue
@@ -29,7 +28,6 @@ const LanguageContext = createContext<LanguageContextType>({
   language: DEFAULT_LANGUAGE, // Langue par défaut
   setLanguage: () => {}, // Fonction vide par défaut pour setLanguage
   t: (key: string) => key, // Fonction de traduction par défaut (retourne la clé si non trouvée)
-  isTranslationsLoaded: false, // Par défaut, les traductions ne sont pas chargées
 });
 
 // Hook personnalisé pour utiliser facilement le contexte de langue
@@ -62,14 +60,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
   // État pour la langue actuelle, initialisé avec getInitialLanguage
   const [language, setLanguageState] = useState<Language>(getInitialLanguage());
-  // État pour indiquer si les traductions sont chargées
-  const [isTranslationsLoaded, setIsTranslationsLoaded] = useState<boolean>(false);
 
   // useEffect pour mettre à jour des choses quand la langue change
   useEffect(() => {
-    // Marque les traductions comme chargées (simplifié, pourrait être plus complexe)
-    setIsTranslationsLoaded(true);
-    
     // Sauvegarde la langue actuelle dans le localStorage
     localStorage.setItem('language', language);
     
@@ -97,7 +90,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       console.warn(`Missing translation for key "${key}" in ${language}`);
       return translations.en[key];
     }
-    
+     
     // Si la clé n'est trouvée nulle part, affiche un avertissement et retourne la clé elle-même
     console.warn(`Translation key not found: "${key}"`);
     return key;
@@ -110,7 +103,6 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
         language, // Langue actuelle
         setLanguage, // Fonction pour changer la langue
         t, // Fonction de traduction
-        isTranslationsLoaded, // État du chargement des traductions
       }}
     >
       {children} {/* Les composants enfants peuvent maintenant accéder à ces valeurs via useLanguage */}

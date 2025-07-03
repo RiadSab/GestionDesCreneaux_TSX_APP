@@ -8,7 +8,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   currentUser,
   onUpdateUser,
 }) => {
-  const { t, isTranslationsLoaded } = useLanguage();
+  const { t } = useLanguage();
   const [settings, setSettings] = useState<UserSettings>({
     account: {
       name: currentUser.name || '',
@@ -35,12 +35,12 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
     setPasswordError('');
 
     if (newPassword !== confirmPassword) {
-      setPasswordError('New passwords do not match');
+      setPasswordError(t('settings.passwordMismatch') || 'New passwords do not match');
       return;
     }
 
     if (newPassword.length < 6) {
-      setPasswordError('Password must be at least 6 characters long');
+      setPasswordError(t('settings.passwordTooShort') || 'Password must be at least 6 characters long');
       return;
     }
 
@@ -53,10 +53,10 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
       setNewPassword('');
       setConfirmPassword('');
 
-      alert('Password changed successfully!');
+      alert(t('settings.passwordChanged') || 'Password changed successfully!');
     } catch (error) {
       console.error('Error changing password:', error);
-      setPasswordError('Failed to change password. Please try again.');
+      setPasswordError(t('settings.passwordChangeError') || 'Failed to change password. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +93,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setEmailError('Please enter a valid email address');
+      setEmailError(t('settings.invalidEmail') || 'Please enter a valid email address');
       return false;
     }
     return true;
@@ -114,20 +114,20 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
         email: settings.account.email,
       });
 
-      alert('Settings saved successfully!');
+      alert(t('settings.saveSuccess') || 'Settings saved successfully!');
     } catch (error) {
       console.error('Error saving settings:', error);
-      alert('Failed to save settings. Please try again.');
+      alert(t('settings.saveError') || 'Failed to save settings. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (!isTranslationsLoaded) {
+  if (isLoading) {
     return (
       <div className="settings-container">
         <LoadingSpinner />
-        <p>Loading...</p>
+        <p>{t('app.loading') || 'Loading...'}</p>
       </div>
     );
   }
@@ -135,7 +135,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
   return (
     <div className="settings-container">
       <header className="settings-header">
-        <h1>Settings</h1>
+        <h1>{t('settings.title') || 'Settings'}</h1>
       </header>
 
       <div className="settings-content">
@@ -147,7 +147,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
               }`}
               onClick={() => setActiveSection('account')}
             >
-              Account
+              {t('settings.account') || 'Account'}
             </button>
             <button
               className={`nav-item ${
@@ -155,7 +155,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
               }`}
               onClick={() => setActiveSection('notifications')}
             >
-              Notifications
+              {t('settings.notifications') || 'Notifications'}
             </button>
           </nav>
         </aside>
@@ -163,35 +163,35 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
         <main className="settings-main">
           {activeSection === 'account' && (
             <section className="settings-section">
-              <h2>Account Settings</h2>
+              <h2>{t('settings.accountSettings') || 'Account Settings'}</h2>
 
               <div className="account-form">
                 <div className="form-group">
-                  <label htmlFor="name">Username</label>
+                  <label htmlFor="name">{t('settings.username') || 'Username'}</label>
                   <input
                     type="text"
                     id="name"
                     name="name"
                     value={settings.account.name}
                     onChange={handleAccountChange}
-                    placeholder="Username"
+                    placeholder={t('settings.usernamePlaceholder') || 'Username'}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="email">Email Address</label>
+                  <label htmlFor="email">{t('settings.emailAddress') || 'Email Address'}</label>
                   <input
                     type="email"
                     id="email"
                     name="email"
                     value={settings.account.email}
                     onChange={handleAccountChange}
-                    placeholder="your.email@example.com"
+                    placeholder={t('settings.emailPlaceholder') || 'your.email@example.com'}
                     className={emailError ? 'input-error' : ''}
                   />
                   {emailError && (
                     <div className="error-message">
-                      Please enter a valid email address
+                      {emailError}
                     </div>
                   )}
                 </div>
@@ -201,19 +201,19 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                   onClick={saveSettings}
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Saving...' : 'Save Changes'}
+                  {isLoading ? (t('settings.saving') || 'Saving...') : (t('settings.saveChanges') || 'Save Changes')}
                 </button>
               </div>
 
               <div className="password-section">
-                <h3>Change Password</h3>
+                <h3>{t('settings.changePassword') || 'Change Password'}</h3>
                 <form onSubmit={handlePasswordChange}>
                   {passwordError && (
                     <div className="error-message">{passwordError}</div>
                   )}
 
                   <div className="form-group">
-                    <label htmlFor="currentPassword">Current Password</label>
+                    <label htmlFor="currentPassword">{t('settings.currentPassword') || 'Current Password'}</label>
                     <input
                       type="password"
                       id="currentPassword"
@@ -224,7 +224,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="newPassword">New Password</label>
+                    <label htmlFor="newPassword">{t('settings.newPassword') || 'New Password'}</label>
                     <input
                       type="password"
                       id="newPassword"
@@ -236,7 +236,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
 
                   <div className="form-group">
                     <label htmlFor="confirmPassword">
-                      Confirm New Password
+                      {t('settings.confirmPassword') || 'Confirm New Password'}
                     </label>
                     <input
                       type="password"
@@ -252,7 +252,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                     className="change-password-button"
                     disabled={isLoading}
                   >
-                    {isLoading ? 'Changing...' : 'Change Password'}
+                    {isLoading ? (t('settings.changing') || 'Changing...') : (t('settings.changePassword') || 'Change Password')}
                   </button>
                 </form>
               </div>
@@ -261,13 +261,13 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
 
           {activeSection === 'notifications' && (
             <section className="settings-section">
-              <h2>Notification Settings</h2>
+              <h2>{t('settings.notificationSettings') || 'Notification Settings'}</h2>
 
               <div className="settings-options">
                 <div className="settings-option">
                   <div className="option-text">
-                    <h3>Email Notifications</h3>
-                    <p>Receive booking confirmations and reminders via email</p>
+                    <h3>{t('settings.emailNotifications') || 'Email Notifications'}</h3>
+                    <p>{t('settings.emailNotificationsDesc') || 'Receive booking confirmations and reminders via email'}</p>
                   </div>
                   <label className="toggle-switch">
                     <input
@@ -282,8 +282,8 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
 
                 <div className="settings-option">
                   <div className="option-text">
-                    <h3>Browser Notifications</h3>
-                    <p>Receive notifications in your web browser</p>
+                    <h3>{t('settings.browserNotifications') || 'Browser Notifications'}</h3>
+                    <p>{t('settings.browserNotificationsDesc') || 'Receive notifications in your web browser'}</p>
                   </div>
                   <label className="toggle-switch">
                     <input
@@ -301,7 +301,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({
                   onClick={saveSettings}
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Saving...' : 'Save Changes'}
+                  {isLoading ? (t('settings.saving') || 'Saving...') : (t('settings.saveChanges') || 'Save Changes')}
                 </button>
               </div>
             </section>

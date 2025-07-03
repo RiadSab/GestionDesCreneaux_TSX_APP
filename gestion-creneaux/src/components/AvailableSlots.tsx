@@ -24,7 +24,7 @@ const ROOM_TYPE_OPTIONS_AS_KEYS = [
 ];
 
 const AvailableSlots: React.FC<AvailableSlotsProps> = ({ currentUser }) => {
-  const { t, language, isTranslationsLoaded } = useLanguage(); // Use the hook
+  const { t, language } = useLanguage(); // Use the hook
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [filteredSlots, setFilteredSlots] = useState<TimeSlot[]>([]);
@@ -225,20 +225,8 @@ const AvailableSlots: React.FC<AvailableSlotsProps> = ({ currentUser }) => {
     return t(key);
   }
 
-  // Loading state for when translations are not ready
-  if (!isTranslationsLoaded) {
-    return (
-      <div className="my-bookings-container">
-        <div className="loading-state">
-          <div className="loading-spinner"></div>
-          <p>{translate('app.loading')}</p>
-        </div>
-      </div>
-    );
-  }
-
   // Loading state for when fetching slots data and no slots are yet available
-  if (isLoading && filteredSlots.length === 0 && timeSlots.length === 0) {
+  if (isLoading) {
     return (
       <div className="my-bookings-container">
         <div className="loading-state">

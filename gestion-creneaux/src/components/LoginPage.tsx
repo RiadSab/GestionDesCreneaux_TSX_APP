@@ -7,14 +7,14 @@ import { loginUser } from '../auth/authUtils';
 import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
-  const { t, isTranslationsLoaded } = useLanguage();
+  const { t } = useLanguage();
   const { login: contextLogin } = useAuth();
   const navigate = useNavigate();
   const [credentials, setCredentials] = useState<LoginCredentials>({
     username: '',
     password: '',
   });
-  const [errors, setErrors] = useState<Partial<LoginCredentials & { api?: string }>>({});
+  const [errors, setErrors] = useState<Partial<LoginCredentials & { api?: string }>>({}); // Ajouter une erreur API générique
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,6 +24,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       [name]: value,
     });
 
+    // Clear error when user types
     if (errors[name as keyof LoginCredentials]) {
       setErrors({
         ...errors,
@@ -63,26 +64,32 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       const response = await loginUser(credentials);
       console.log('Login successful:', response);
 
+      // Backend response now includes: message, userId, email, userName, token
       if (response && response.token && response.userId && response.userName && response.email) {
         const userData: User = {
           id: response.userId,
-          name: response.userName,
+          name: response.userName, // Use userName from response for User.name
           email: response.email,
-          password: '', 
-          createdAt: new Date(), 
-          updatedAt: new Date(), 
+          // User type requires password, createdAt, updatedAt. 
+          // These are not typically sent on login response.
+          // Providing dummy values for required fields not in login response.
+          password: '', // Not stored from login
+          createdAt: new Date(), // Placeholder
+          updatedAt: new Date(), // Placeholder
         };
         
         contextLogin(userData, response.token);
         onLogin(userData);
         navigate('/dashboard');
       } else {
+        // This case should ideally not be hit if backend always sends all fields
         console.error('Login response missing expected fields:', response);
         setErrors({ api: 'Login failed due to unexpected server response.' });
       }
 
     } catch (error: any) {
       console.error('Login failed:', error);
+      // Si l'erreur a une structure attendue de notre backend (ex: error.message)
       if (error && error.message) {
         setErrors({ api: error.message });
       } else {
@@ -94,16 +101,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     }
   };
 
-  if (isTranslationsLoaded === false) {
-    return (
-      <div className="login-container">
-        <div className="login-card">
-          <div className="loading-spinner"></div>
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="login-container">
